@@ -70,6 +70,9 @@ public class rvadapter extends RecyclerView.Adapter<rvadapter.PersonViewHolder> 
             card_view = (CardView)itemView.findViewById(R.id.card_view);
             fileName = (TextView)itemView.findViewById(R.id.textView);
             filePhoto = (ImageView)itemView.findViewById(R.id.imageView);
+            View.OnClickListener abc;
+
+
         }
     }
 

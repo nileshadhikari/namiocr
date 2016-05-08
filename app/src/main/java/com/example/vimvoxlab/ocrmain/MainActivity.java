@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         bbc.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent editorintent = new Intent(getApplicationContext(),imgprocess.class);
+                editorintent.putExtra("link",getIntent().getStringExtra("link"));
                 finish();
                 startActivity(editorintent);
             }
@@ -94,6 +95,12 @@ public class MainActivity extends AppCompatActivity {
         rv.setLayoutManager(llm);
         rvadapter adapter = new rvadapter(gimages);
         rv.setAdapter(adapter);
+
+    }
+
+    public void externalstorage(){
+
+
 
     }
 

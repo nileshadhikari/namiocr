@@ -18,12 +18,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.isseiaoki.simplecropview.CropImageView;
+import com.isseiaoki.simplecropview.callback.LoadCallback;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class CamActivity extends AppCompatActivity {
 
+    String abc="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,9 +43,6 @@ public class CamActivity extends AppCompatActivity {
         CameraPreview mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.flayout);
         preview.addView(mPreview);
-
-
-
 
 
         FloatingActionButton camclick = (FloatingActionButton) findViewById(R.id.camclick);
@@ -61,6 +62,7 @@ public class CamActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent homeintent = new Intent(getApplicationContext(),MainActivity.class);
+                homeintent.putExtra("link",abc);
                 finish();
                 startActivity(homeintent);
 
@@ -107,7 +109,7 @@ public class CamActivity extends AppCompatActivity {
                     }
                     abc=System.currentTimeMillis();
 
-                    file=new File(Environment.getExternalStorageDirectory()+"/tesseract/testimages/"+abc+".jpg");
+                    file=new File(Environment.getExternalStorageDirectory()+"/tesseract/testimages/abc.jpg");
 
 
                     try
@@ -131,6 +133,9 @@ public class CamActivity extends AppCompatActivity {
                 }
                 camera.startPreview();
             }
+            camera.startPreview();
+            Toast finaltoast = Toast.makeText(getApplicationContext(),"Not availabe in demo version",Toast.LENGTH_SHORT);
+            finaltoast.show();
         }
     };
 
