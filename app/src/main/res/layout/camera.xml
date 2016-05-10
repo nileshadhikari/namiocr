@@ -4,15 +4,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/button3"
-        android:layout_above="@+id/button2"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/camclick"
@@ -21,31 +12,34 @@
         android:layout_gravity="bottom|end"
         android:src="@drawable/camclick"
         app:elevation="3dp"
-        android:layout_below="@+id/flayout"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/button2"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <FrameLayout
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/home"
+        app:elevation="3dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:id="@+id/flayout"
-        android:layout_toLeftOf="@+id/button"
-        android:layout_toStartOf="@+id/button"
-        android:layout_above="@+id/button3">
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/camclick"
+        android:layout_toStartOf="@+id/camclick">
 
         <SurfaceView
-            android:layout_width="417dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/surfaceView"
             android:layout_alignParentTop="true"
@@ -54,6 +48,15 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
+
+        <com.example.vimvoxlab.ocrmain.ocrview
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/view"
+            android:layout_gravity="center"
+            android:elevation="7dp"/>
+
+
 
     </FrameLayout>
 </RelativeLayout>

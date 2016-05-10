@@ -1,8 +1,12 @@
 package com.example.vimvoxlab.ocrmain;
 
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -16,11 +20,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+
 
     List<galleryimage> gimages;
 
@@ -35,8 +43,46 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+
+        public boolean isExternalStorageWritable() {
+            String state = Environment.getExternalStorageState();
+            if (Environment.MEDIA_MOUNTED.equals(state)) {
+                return true;
+            }
+            return false;
+        }
+
+        /* Checks if external storage is available to at least read */
+        public boolean isExternalStorageReadable() {
+            String state = Environment.getExternalStorageState();
+            if (Environment.MEDIA_MOUNTED.equals(state) ||
+                    Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+                return true;
+            }
+            return false;
+        }
+        public void checkstorage(){
+            if((isExternalStorageReadable()==true)&&(isExternalStorageWritable()==true)){
+
+                    File abc = new File(Environment.getExternalStorageDirectory()+"/tesseract/tessmain/tessdata");
+                    abc.mkdirs();
+                    File abc1 = new File(Environment.getExternalStorageDirectory()+"/tesseract/testimages");
+                    abc1.mkdirs();
+            }
+           if((isExternalStorageWritable()==false)||(isExternalStorageReadable()==false)){
+                    File abc = new File(Environment.getDataDirectory()+"/tesseract/tessmain/tessdata");
+                    abc.mkdirs();
+                    File abc1 = new File(Environment.getExternalStorageDirectory()+"/tesseract/testimages");
+                    abc1.mkdirs();
+
+           }
+
+        }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FloatingActionButton abc = (FloatingActionButton) findViewById(R.id.fab);
@@ -64,8 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
         imagefinalize();
         recycleview();
-
-
+        checkstorage();
     }
 
 //    public void findimages(){
@@ -98,9 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void externalstorage(){
-
-
+    public void Download(){
 
     }
 
@@ -133,7 +176,3 @@ public class MainActivity extends AppCompatActivity {
 
 
 }
-
-
-
-

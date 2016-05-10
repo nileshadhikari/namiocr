@@ -21,8 +21,11 @@ import com.googlecode.leptonica.android.AdaptiveMap;
 import com.googlecode.leptonica.android.Binarize;
 import com.googlecode.leptonica.android.Convert;
 import com.googlecode.leptonica.android.Edge;
+import com.googlecode.leptonica.android.GrayQuant;
+import com.googlecode.leptonica.android.MorphApp;
 import com.googlecode.leptonica.android.Pix;
 import com.googlecode.leptonica.android.ReadFile;
+import com.googlecode.leptonica.android.Rotate;
 import com.googlecode.leptonica.android.Skew;
 import com.googlecode.leptonica.android.WriteFile;
 import com.googlecode.tesseract.android.TessBaseAPI;
@@ -31,11 +34,13 @@ import com.isseiaoki.simplecropview.callback.CropCallback;
 import com.isseiaoki.simplecropview.callback.LoadCallback;
 import com.isseiaoki.simplecropview.callback.SaveCallback;
 
+
 import java.io.ByteArrayOutputStream;
 
 public class imgprocess extends AppCompatActivity {
 
-    Bitmap bmpmain = BitmapFactory.decodeFile("/storage/emulated/0/tesseract/testimages/abc.jpg");
+    String abclink="/storage/emulated/0/tesseract/testimages/abc.jpg";
+    Bitmap bmpmain = BitmapFactory.decodeFile(abclink);
     Bitmap newbmp;
     Bitmap uniquebmp;
 
@@ -46,7 +51,7 @@ public class imgprocess extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imgprocess);
-
+//        picassa();
 
 
         initialize(Binarize(bmpmain));
@@ -115,8 +120,7 @@ public class imgprocess extends AppCompatActivity {
         assert mCropView != null;
         mCropView.startLoad(
 
-                getImageUri(getApplicationContext(),Binarize(bmpmain)),
-
+                getImageUri(getApplicationContext(),bmpmain),
                 new LoadCallback() {
                     @Override
                     public void onSuccess() {}
@@ -169,9 +173,10 @@ public class imgprocess extends AppCompatActivity {
                 startActivity(homeintent);
 
 
-            }
+                     }
 
-    });
+            });
+
 
     }
 
@@ -204,13 +209,26 @@ public class imgprocess extends AppCompatActivity {
 
     }
 
-    public void edgedetection(){
-        Pix old = ReadFile.readBitmap(newbmp);
-        Pix newp = Edge.pixSobelEdgeFilter(old, Edge.L_ALL_EDGES);
+    public Bitmap Grayquant(Bitmap bmp){
+        Pix old = ReadFile.readBitmap(bmp);
+        Pix newp = GrayQuant.pixThresholdToBinary(old,60);
         Bitmap newbmp = WriteFile.writeBitmap(newp);
-        initialize(newbmp);
-
+        return newbmp;
     }
+
+    public Bitmap rotate(Bitmap bmp){
+        Pix old = ReadFile.readBitmap(bmp);
+        Pix haha = Rotate.rotate(old,40);
+        Bitmap newbmp = WriteFile.writeBitmap(haha);
+        return newbmp;
+    }
+     public Bitmap Tophat(Bitmap bmp){
+
+         Pix old = ReadFile.readBitmap(bmp);
+         Pix newp = MorphApp.pixFastTophatBlack(old);
+         Bitmap newbmp = WriteFile.writeBitmap(newp);
+         return newbmp;
+     }
 
     public Bitmap croptext(Bitmap bitmap){
         Bitmap newbm = bitmap.createBitmap(bitmap, 60, bitmap.getHeight() - 250, bitmap.getWidth() - 260, 200);
@@ -255,17 +273,25 @@ public class imgprocess extends AppCompatActivity {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            Toast ocr4 = Toast.makeText(getApplicationContext(),"Detection Complete",Toast.LENGTH_SHORT);
-            ocr4.show();
 
 
-            tv2.setText(detectText(grayscale(temp_bmp)));
+
+            tv2.setText(detectText(Binarize(grayscale(temp_bmp))));
             i=0;
+            initialize(rotate(bmpmain));
             btnhome.setVisibility(View.VISIBLE);
 
         }
 
     }
+
+//    public void picassa(){
+//        ImageView img = (ImageView) findViewById(R.id.ip_image);
+//        Picasso.with(getApplicationContext()).load(abclink).into(img);
+//        Picasso.with(getApplicationContext()).load(R.drawable.demo)
+//                .transform(Bright).into((ImageView) findViewById(R.id.image));
+//
+//    }
     public String detectText(Bitmap bitmap) {
 
 

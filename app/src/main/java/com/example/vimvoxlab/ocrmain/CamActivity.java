@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.ShapeDrawable;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,12 +31,15 @@ import java.io.IOException;
 public class CamActivity extends AppCompatActivity {
 
     String abc="";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         setContentView(R.layout.camera);
+        ocrview newha = (ocrview)findViewById(R.id.view);
+        newha.setCameraDistance(1280);
+        newha.setVisibility(View.VISIBLE);
+
 
 
 
@@ -134,8 +140,7 @@ public class CamActivity extends AppCompatActivity {
                 camera.startPreview();
             }
             camera.startPreview();
-            Toast finaltoast = Toast.makeText(getApplicationContext(),"Not availabe in demo version",Toast.LENGTH_SHORT);
-            finaltoast.show();
+
         }
     };
 

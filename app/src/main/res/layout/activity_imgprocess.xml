@@ -47,7 +47,9 @@
         custom:scv_guide_show_mode="show_always"
         custom:scv_min_frame_size="50dp"
         custom:scv_frame_stroke_weight="1dp"
-        custom:scv_guide_stroke_weight="1dp"/>
+        custom:scv_guide_stroke_weight="1dp"
+        android:layout_toLeftOf="@+id/btn_ocr"
+        android:layout_toStartOf="@+id/btn_ocr" />
 
     <android.support.design.widget.FloatingActionButton
         android:layout_width="60dp"
