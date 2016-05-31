@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import java.util.List;
  */
 public class rvadapter extends RecyclerView.Adapter<rvadapter.PersonViewHolder>   {
 
+    rvlistener mOnClickListener;
 
     public rvadapter(List<galleryimage> gimages) {
         this.gimages = gimages;
@@ -29,6 +31,7 @@ public class rvadapter extends RecyclerView.Adapter<rvadapter.PersonViewHolder> 
     @Override
     public PersonViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recycler_layout, viewGroup, false);
+        v.setOnClickListener(mOnClickListener);
         PersonViewHolder pvh = new PersonViewHolder(v);
         return pvh;
     }
@@ -38,13 +41,8 @@ public class rvadapter extends RecyclerView.Adapter<rvadapter.PersonViewHolder> 
 
         personViewHolder.filePhoto.setImageBitmap(BitmapFactory.decodeFile(gimages.get(position).glink));
         personViewHolder.fileName.setText(gimages.get(position).gname);
-        personViewHolder.filePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        personViewHolder.btnedit.setOnClickListener(mOnClickListener);
 
-
-            }
-        });
 
     }
 
@@ -62,6 +60,7 @@ public class rvadapter extends RecyclerView.Adapter<rvadapter.PersonViewHolder> 
         CardView card_view;
         TextView fileName;
         ImageView filePhoto;
+        Button btnedit;
 
 
 
@@ -70,8 +69,7 @@ public class rvadapter extends RecyclerView.Adapter<rvadapter.PersonViewHolder> 
             card_view = (CardView)itemView.findViewById(R.id.card_view);
             fileName = (TextView)itemView.findViewById(R.id.textView);
             filePhoto = (ImageView)itemView.findViewById(R.id.imageView);
-            View.OnClickListener abc;
-
+            btnedit = (Button)itemView.findViewById(R.id.btn_edit);
 
         }
     }

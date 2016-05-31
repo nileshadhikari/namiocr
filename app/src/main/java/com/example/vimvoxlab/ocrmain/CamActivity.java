@@ -14,6 +14,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -21,6 +22,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.isseiaoki.simplecropview.CropImageView;
 import com.isseiaoki.simplecropview.callback.LoadCallback;
 
@@ -115,6 +118,23 @@ public class CamActivity extends AppCompatActivity {
                     }
                     abc=System.currentTimeMillis();
 
+
+                            new MaterialDialog.Builder(CamActivity.this)
+                            .title("Enter the file name :-")
+                            .content("Please type in the image name to save it")
+                            .inputType(InputType.TYPE_CLASS_TEXT)
+                            .positiveText("ok")
+                            .dividerColor(Color.BLACK)
+                            .btnSelector(R.drawable.ocr,DialogAction.POSITIVE)
+                            .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
+                                @Override
+                                public void onInput(MaterialDialog dialog, CharSequence input) {
+
+
+                                }}).show();
+
+
+
                     file=new File(Environment.getExternalStorageDirectory()+"/tesseract/testimages/abc.jpg");
 
 
@@ -137,7 +157,7 @@ public class CamActivity extends AppCompatActivity {
 //                    TextView txtview = (TextView) findViewById(R.id.textView);
 //                    txtview.setText(detectText(bmap));
                 }
-                camera.startPreview();
+
             }
             camera.startPreview();
 

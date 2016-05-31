@@ -10,8 +10,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:src="@drawable/camclick"
+        android:src="@drawable/camfab"
         app:elevation="3dp"
+        android:backgroundTint="@android:color/transparent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
@@ -22,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:src="@drawable/home"
+        android:backgroundTint="@android:color/transparent"
         app:elevation="3dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"

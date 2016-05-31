@@ -18,8 +18,8 @@
         android:id="@+id/rv"
         android:layout_toLeftOf="@+id/ippo"
         android:layout_toStartOf="@+id/ippo"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/ippo" />
 
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"

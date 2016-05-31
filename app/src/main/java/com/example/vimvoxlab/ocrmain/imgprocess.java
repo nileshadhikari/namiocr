@@ -1,15 +1,20 @@
 package com.example.vimvoxlab.ocrmain;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -26,6 +31,7 @@ import com.googlecode.leptonica.android.MorphApp;
 import com.googlecode.leptonica.android.Pix;
 import com.googlecode.leptonica.android.ReadFile;
 import com.googlecode.leptonica.android.Rotate;
+import com.googlecode.leptonica.android.Scale;
 import com.googlecode.leptonica.android.Skew;
 import com.googlecode.leptonica.android.WriteFile;
 import com.googlecode.tesseract.android.TessBaseAPI;
@@ -36,13 +42,20 @@ import com.isseiaoki.simplecropview.callback.SaveCallback;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class imgprocess extends AppCompatActivity {
 
-    String abclink="/storage/emulated/0/tesseract/testimages/abc.jpg";
+    String main_folder= Environment.getExternalStorageDirectory().toString();
+    String abclink = main_folder + "/tesseract/testimages/abc.jpg";
     Bitmap bmpmain = BitmapFactory.decodeFile(abclink);
     Bitmap newbmp;
     Bitmap uniquebmp;
+    Bitmap unbmp;
 
 
     int i=0;
@@ -51,105 +64,29 @@ public class imgprocess extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imgprocess);
-//        picassa();
 
+        Toast.makeText(getApplicationContext(),abclink,Toast.LENGTH_SHORT).show();
 
-        initialize(Binarize(bmpmain));
-
-//        grayscale();
-//        try {
-//            Thread.sleep(3000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        Binarize();
-//        try {
-//            Thread.sleep(3000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        initialize(newbmp);
-//        try {
-//            Thread.sleep(3000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        croptext(newbmp);
-
-
-
+        ocr_image_finalize();
         FloatingActionButton btnocr = (FloatingActionButton) findViewById(R.id.btn_ocr);
+        assert btnocr != null;
         btnocr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 CropImageView mCropView = (CropImageView) findViewById(R.id.cropImageView);
-//                try {
-//                    Thread.sleep(3000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                grayscale(bmpmain);
-//                try {
-//                    Thread.sleep(3000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                Binarize(bmpmain);
-
-//                initialize(croptext(bmpmain));
-//                TextView newtr = (TextView)findViewById(R.id.textView);
-//                newtr.setText(detectText(croptext(bmpmain)));
                     if(i==0){
                         uniquebmp = mCropView.getCroppedBitmap();
                     }
-
-                    initialize(mCropView.getCroppedBitmap());
                     mCropView.setVisibility(View.INVISIBLE);
-                    counterfunc(uniquebmp);
+                    initialize(mCropView.getCroppedBitmap());
+                    ocr_detecttext();
+//                    counterfunc(uniquebmp);
 //
 //                TextView tv2 = (TextView)findViewById(R.id.textView2);
 //                tv2.setText(detectText(Binarize(mCropView.getCroppedBitmap())));
             }
         });
-
-        CropImageView mCropView = (CropImageView) findViewById(R.id.cropImageView);
-        mCropView.setCropMode(CropImageView.CropMode.FREE);
-        mCropView.setMinFrameSizeInDp(10);
-
-        assert mCropView != null;
-        mCropView.startLoad(
-
-                getImageUri(getApplicationContext(),bmpmain),
-                new LoadCallback() {
-                    @Override
-                    public void onSuccess() {}
-
-                    @Override
-                    public void onError() {}
-                });
-
-//        mCropView.startCrop(
-//
-//                Uri.parse("/storage/emulated/0/tesseract/testimages/temp.jpg"),
-//
-//                new CropCallback() {
-//                    @Override
-//                    public void onSuccess(Bitmap cropped) {}
-//
-//                    @Override
-//                    public void onError() {}
-//                },
-//
-//                new SaveCallback() {
-//                    @Override
-//                    public void onSuccess(Uri outputUri) {}
-//
-//                    @Override
-//                    public void onError() {}
-//                }
-//        );
-
 
         FloatingActionButton btnhome = (FloatingActionButton) findViewById(R.id.home);
         assert btnhome != null;
@@ -164,27 +101,12 @@ public class imgprocess extends AppCompatActivity {
             }
 
         });
-        assert btnhome != null;
-        btnhome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent homeintent = new Intent(getApplicationContext(),MainActivity.class);
-                finish();
-                startActivity(homeintent);
-
-
-                     }
-
-            });
-
 
     }
 
     public void initialize(Bitmap bmp){
         ImageView img = (ImageView) findViewById(R.id.ip_image);
         img.setImageBitmap(bmp);
-
-
     }
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {
@@ -230,18 +152,19 @@ public class imgprocess extends AppCompatActivity {
          return newbmp;
      }
 
+    public Bitmap scaling(Bitmap bmp){
+        Pix old = ReadFile.readBitmap(bmp);
+        Pix newp = Scale.scaleToSize(old,800,130, Scale.ScaleType.FIT_SHRINK);
+        Bitmap newbmp = WriteFile.writeBitmap(newp);
+        return newbmp;
+
+    }
+
     public Bitmap croptext(Bitmap bitmap){
         Bitmap newbm = bitmap.createBitmap(bitmap, 60, bitmap.getHeight() - 250, bitmap.getWidth() - 260, 200);
         return newbm;
     }
 
-//    public Bitmap enhance(Bitmap bmp){
-//        Pix old = ReadFile.readBitmap(bmp);
-//        Pix new = AdaptiveMap.backgroundNormMorph(old,)
-//
-//        Bitmap newbmp = WriteFile.writeBitmap(newp);
-//        return newbmp;
-//    };
 
     public void counterfunc(Bitmap newbp){
         Bitmap temp_bmp = newbp;
@@ -254,12 +177,12 @@ public class imgprocess extends AppCompatActivity {
         if(i==1){
             tv2.setText("");
             btnhome.setVisibility(View.INVISIBLE);
-            initialize(grayscale(temp_bmp));
+            initialize(grayscale(scaling(temp_bmp)));
             Toast ocr1 = Toast.makeText(getApplicationContext(),"The image is now grayscaled",Toast.LENGTH_SHORT);
             ocr1.show();
         }
         if(i==2){
-            initialize(Binarize(grayscale(temp_bmp)));
+            initialize(Binarize(grayscale(scaling(temp_bmp))));
             Toast ocr2 = Toast.makeText(getApplicationContext(), "The image is now binarized", Toast.LENGTH_SHORT);
             ocr2.show();
         }
@@ -276,7 +199,7 @@ public class imgprocess extends AppCompatActivity {
 
 
 
-            tv2.setText(detectText(Binarize(grayscale(temp_bmp))));
+            tv2.setText(detectText(Binarize(grayscale(scaling(temp_bmp)))));
             i=0;
             initialize(rotate(bmpmain));
             btnhome.setVisibility(View.VISIBLE);
@@ -314,4 +237,108 @@ public class imgprocess extends AppCompatActivity {
         tessBaseAPI.end();
         return text;
     }
+
+
+    public void Cropinitialize(){
+        CropImageView mCropView = (CropImageView) findViewById(R.id.cropImageView);
+        mCropView.setCropMode(CropImageView.CropMode.FREE);
+        mCropView.setMinFrameSizeInDp(10);
+
+        assert mCropView != null;
+        mCropView.startLoad(
+
+                getImageUri(getApplicationContext(),bmpmain),
+                new LoadCallback() {
+                    @Override
+                    public void onSuccess() {}
+
+                    @Override
+                    public void onError() {}
+                });
+    }
+
+
+    public void ocr_detecttext(){
+        // this is the one i need to decrese . needn't i ??
+
+        new AsyncTask<Void, Void, String>() {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                mProgressDialog = new ProgressDialog(imgprocess.this);
+                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                mProgressDialog.setIndeterminate(true);
+                mProgressDialog.setMessage("Detecting Text ..... ");
+                mProgressDialog.setCancelable(false);
+                mProgressDialog.setTitle("");
+                mProgressDialog.show();
+
+            }
+
+            @Override
+            protected String doInBackground(Void... voids) {
+
+
+                Bitmap _bitmap = grayscale(uniquebmp);
+                Bitmap bitmap = Binarize(_bitmap);
+                String answer = detectText(bitmap);
+                return answer;
+            }
+
+            @Override
+            protected void onPostExecute(String str) {
+                super.onPostExecute(str);
+                TextView tv2 = (TextView)findViewById(R.id.textView2);
+                tv2.setText(str);
+                if (mProgressDialog != null && mProgressDialog.isShowing())
+                    mProgressDialog.dismiss();
+            }
+        }.execute();
+
+
+    }
+
+    private ProgressDialog mProgressDialog;
+    public void ocr_image_finalize(){
+        new AsyncTask<Void, Void, Bitmap>() {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                mProgressDialog = new ProgressDialog(imgprocess.this);
+                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                mProgressDialog.setIndeterminate(true);
+                mProgressDialog.setMessage("Applying Image Processing ...");
+                mProgressDialog.setCancelable(false);
+                mProgressDialog.setTitle("");
+                mProgressDialog.show();
+
+            }
+
+            @Override
+            protected Bitmap doInBackground(Void... voids) {
+
+                Cropinitialize();
+
+
+                Bitmap newbmp = bmpmain;
+                return newbmp;
+
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bmp) {
+                super.onPostExecute(bmp);
+                initialize(bmp);
+                if (mProgressDialog != null && mProgressDialog.isShowing())
+                    mProgressDialog.dismiss();
+            }
+        }.execute();
+
+    }
+
+
+
+
 }

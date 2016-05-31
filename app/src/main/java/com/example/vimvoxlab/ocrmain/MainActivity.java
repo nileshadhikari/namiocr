@@ -2,8 +2,11 @@ package com.example.vimvoxlab.ocrmain;
 
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -18,9 +21,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,8 +36,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    rvlistener newlistener;
     List<galleryimage> gimages;
+    String main_folder=Environment.getExternalStorageDirectory().toString();
 
     class galleryimage{
         String glink;
@@ -111,8 +119,20 @@ public class MainActivity extends AppCompatActivity {
         imagefinalize();
         recycleview();
         checkstorage();
+//        checksharedpref();
+        trained_datafile();
     }
 
+    public void checksharedpref(){
+
+        SharedPreferences prefs = this.getSharedPreferences(
+                "com.example.vimvoxlab.ocrmain", Context.MODE_APPEND);
+        if(prefs.getBoolean("access_allowed",false)==false){ sharedpref(); trained_datafile();
+        Toast.makeText(getApplicationContext(),"first run",Toast.LENGTH_SHORT).show();}
+        else {
+            Toast.makeText(getApplicationContext(),"not first run",Toast.LENGTH_SHORT).show();
+        }
+    }
 //    public void findimages(){
 //
 //        ArrayList<File> m_list = new ArrayList<File>();
@@ -137,15 +157,15 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
         GridLayoutManager llayout = new GridLayoutManager(getApplicationContext(),2);
 
-        rv.setLayoutManager(llm);
+        rv.setLayoutManager(llayout);
         rvadapter adapter = new rvadapter(gimages);
         rv.setAdapter(adapter);
 
     }
 
-    public void Download(){
 
-    }
+
+
 
     public void imagefinalize(){
 
@@ -168,11 +188,45 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-
-
     }
 
+    public void sharedpref(){
+        SharedPreferences prefs = this.getSharedPreferences(
+                "com.example.vimvoxlab.ocrmain", Context.MODE_APPEND);
+        SharedPreferences.Editor newedit = prefs.edit();
+        Boolean access_allowed= true;
+        newedit.putBoolean("access_allowed",access_allowed);
+        newedit.apply();
+    }
 
+    public void trained_datafile(){
+
+
+        if (!(new File(main_folder + "tesseract/tessmain/tessdata/" + "ocrb" + ".traineddata")).exists()) {
+            try {
+                Toast.makeText(getApplicationContext(),"file pani chaina",Toast.LENGTH_SHORT).show();
+                AssetManager assetManager = getAssets();
+                InputStream in = assetManager.open("tessdata/" + "ocrb" + ".traineddata");
+                OutputStream out = new FileOutputStream(main_folder
+                        + "tesseract/tessmain/tessdata/" + "ocrb" + ".traineddata");
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+
+                Toast.makeText(getApplicationContext(),in.toString(),Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(getApplicationContext(),out.toString(),Toast.LENGTH_SHORT).show();
+                in.close();
+                out.close();
+                Toast.makeText(getApplicationContext(),"sucessful loading trained data",Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                Toast.makeText(getApplicationContext(),"unsucessful loading trained data",Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
 
 
 }
