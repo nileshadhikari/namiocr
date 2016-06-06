@@ -11,18 +11,18 @@
     tools:context="com.example.vimvoxlab.ocrmain.imgprocess">
 
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ip_image"
-        android:scaleType="centerInside"
-        android:adjustViewBounds="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignBottom="@+id/btn_ocr"
-        android:layout_toLeftOf="@+id/btn_ocr"
-        android:layout_toStartOf="@+id/btn_ocr" />
+    <!--<ImageView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/ip_image"-->
+        <!--android:scaleType="centerInside"-->
+        <!--android:adjustViewBounds="true"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_alignBottom="@+id/btn_ocr"-->
+        <!--android:layout_toLeftOf="@+id/btn_ocr"-->
+        <!--android:layout_toStartOf="@+id/btn_ocr" />-->
 
     <com.isseiaoki.simplecropview.CropImageView
         xmlns:custom="http://schemas.android.com/apk/res-auto"
@@ -33,7 +33,7 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:elevation="6dp"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         custom:scv_crop_mode="fit_image"
         custom:scv_background_color="@color/windowBackground"

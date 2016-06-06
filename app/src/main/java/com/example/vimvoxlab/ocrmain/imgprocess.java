@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -50,29 +51,33 @@ import java.io.OutputStream;
 
 public class imgprocess extends AppCompatActivity {
 
-    String main_folder= Environment.getExternalStorageDirectory().toString();
-    String abclink = main_folder + "/tesseract/testimages/abc.jpg";
+    String main_folder= Environment.getExternalStorageDirectory().getAbsolutePath();
+    String abclink = main_folder + "/tesseract/testimages/temp123.jpg";
     Bitmap bmpmain = BitmapFactory.decodeFile(abclink);
     Bitmap newbmp;
     Bitmap uniquebmp;
     Bitmap unbmp;
+    static int i=0;
 
 
-    int i=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imgprocess);
 
+
         Toast.makeText(getApplicationContext(),abclink,Toast.LENGTH_SHORT).show();
+//        initialize(bmpmain);
 
         ocr_image_finalize();
+
         FloatingActionButton btnocr = (FloatingActionButton) findViewById(R.id.btn_ocr);
         assert btnocr != null;
         btnocr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
 
                 CropImageView mCropView = (CropImageView) findViewById(R.id.cropImageView);
                     if(i==0){
@@ -105,8 +110,10 @@ public class imgprocess extends AppCompatActivity {
     }
 
     public void initialize(Bitmap bmp){
-        ImageView img = (ImageView) findViewById(R.id.ip_image);
-        img.setImageBitmap(bmp);
+//        ImageView img = (ImageView) findViewById(R.id.ip_image);
+        CropImageView mCropView = (CropImageView) findViewById(R.id.cropImageView);
+        mCropView.setVisibility(View.INVISIBLE);
+//        img.setImageBitmap(bmp);
     }
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {
@@ -240,20 +247,24 @@ public class imgprocess extends AppCompatActivity {
 
 
     public void Cropinitialize(){
+//        ImageView img = (ImageView) findViewById(R.id.ip_image);
+//        img.setVisibility(View.INVISIBLE);
         CropImageView mCropView = (CropImageView) findViewById(R.id.cropImageView);
         mCropView.setCropMode(CropImageView.CropMode.FREE);
+//        mCropView.setOutputMaxSize(img.getWidth(),img.getHeight());
+
         mCropView.setMinFrameSizeInDp(10);
 
         assert mCropView != null;
-        mCropView.startLoad(
-
-                getImageUri(getApplicationContext(),bmpmain),
+        mCropView.startLoad(Uri.fromFile(new File(abclink)),
                 new LoadCallback() {
                     @Override
-                    public void onSuccess() {}
+                    public void onSuccess() {
+                    }
 
                     @Override
-                    public void onError() {}
+                    public void onError() {
+                    }
                 });
     }
 
@@ -282,7 +293,9 @@ public class imgprocess extends AppCompatActivity {
 
                 Bitmap _bitmap = grayscale(uniquebmp);
                 Bitmap bitmap = Binarize(_bitmap);
+                initialize(bitmap);
                 String answer = detectText(bitmap);
+
                 return answer;
             }
 
@@ -319,18 +332,23 @@ public class imgprocess extends AppCompatActivity {
             @Override
             protected Bitmap doInBackground(Void... voids) {
 
-                Cropinitialize();
 
+//                initialize(bmpmain);
+                try{
+              Cropinitialize();}catch(Exception e){
+                    Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_SHORT).show();
+                }
 
-                Bitmap newbmp = bmpmain;
-                return newbmp;
+                return  BitmapFactory.decodeFile(abclink);
+
 
             }
 
             @Override
             protected void onPostExecute(Bitmap bmp) {
                 super.onPostExecute(bmp);
-                initialize(bmp);
+//                initialize(bmp);
+
                 if (mProgressDialog != null && mProgressDialog.isShowing())
                     mProgressDialog.dismiss();
             }

@@ -40,8 +40,8 @@ public class rvadapter extends RecyclerView.Adapter<rvadapter.PersonViewHolder> 
     public void onBindViewHolder(PersonViewHolder personViewHolder, int position) {
 
         personViewHolder.filePhoto.setImageBitmap(BitmapFactory.decodeFile(gimages.get(position).glink));
-        personViewHolder.fileName.setText(gimages.get(position).gname);
-        personViewHolder.btnedit.setOnClickListener(mOnClickListener);
+//        personViewHolder.fileName.setText(gimages.get(position).gname);
+//        personViewHolder.btnedit.setOnClickListener(mOnClickListener);
 
 
     }
@@ -67,9 +67,9 @@ public class rvadapter extends RecyclerView.Adapter<rvadapter.PersonViewHolder> 
         PersonViewHolder(View itemView) {
             super(itemView);
             card_view = (CardView)itemView.findViewById(R.id.card_view);
-            fileName = (TextView)itemView.findViewById(R.id.textView);
+//            fileName = (TextView)itemView.findViewById(R.id.textView);
             filePhoto = (ImageView)itemView.findViewById(R.id.imageView);
-            btnedit = (Button)itemView.findViewById(R.id.btn_edit);
+//            btnedit = (Button)itemView.findViewById(R.id.btn_edit);
 
         }
     }

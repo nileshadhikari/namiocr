@@ -18,6 +18,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -202,28 +203,40 @@ public class MainActivity extends AppCompatActivity {
     public void trained_datafile(){
 
 
-        if (!(new File(main_folder + "tesseract/tessmain/tessdata/" + "ocrb" + ".traineddata")).exists()) {
-            try {
-                Toast.makeText(getApplicationContext(),"file pani chaina",Toast.LENGTH_SHORT).show();
-                AssetManager assetManager = getAssets();
-                InputStream in = assetManager.open("tessdata/" + "ocrb" + ".traineddata");
-                OutputStream out = new FileOutputStream(main_folder
-                        + "tesseract/tessmain/tessdata/" + "ocrb" + ".traineddata");
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
+        if (!(new File(main_folder + "/tesseract/tessmain/tessdata/" + "ocrb" + ".traineddata")).exists()) {
+            Toast.makeText(getApplicationContext(),"file pani chaina",Toast.LENGTH_SHORT).show();
+//
+            String asset_link = "tessdata/ocrb.traineddata";
+             copyFile(asset_link);
+        }
 
-                Toast.makeText(getApplicationContext(),in.toString(),Toast.LENGTH_SHORT).show();
+    }
 
-                Toast.makeText(getApplicationContext(),out.toString(),Toast.LENGTH_SHORT).show();
-                in.close();
-                out.close();
-                Toast.makeText(getApplicationContext(),"sucessful loading trained data",Toast.LENGTH_SHORT).show();
-            } catch (IOException e) {
-                Toast.makeText(getApplicationContext(),"unsucessful loading trained data",Toast.LENGTH_SHORT).show();
+    private void copyFile(String filename) {
+        AssetManager assetManager = this.getAssets();
+
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            in = assetManager.open(filename);
+            String newFileName = main_folder + "/tesseract/tessmain/tessdata/ocrb.traineddata";
+            out = new FileOutputStream(newFileName);
+
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
             }
+            in.close();
+            in = null;
+            out.flush();
+            out.close();
+            out = null;
+            Toast.makeText(getApplicationContext(),"successful loading trained data",Toast.LENGTH_SHORT).show();
+
+
+        } catch (Exception e) {
+            Log.e("tag", e.getMessage());
         }
 
     }
